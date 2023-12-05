@@ -1,0 +1,15 @@
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\bin\Debug\net8.0\SWConsole.exe
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\bin\Debug\net8.0\SWConsole.deps.json
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\bin\Debug\net8.0\SWConsole.runtimeconfig.json
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\bin\Debug\net8.0\SWConsole.dll
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\bin\Debug\net8.0\SWConsole.pdb
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.AssemblyInfoInputs.cache
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.AssemblyInfo.cs
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.csproj.CoreCompileInputs.cache
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.sourcelink.json
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.dll
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\refint\SWConsole.dll
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.pdb
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\SWConsole.genruntimeconfig.cache
+C:\Users\brebr\source\repos\spaceWarsConsole\SWConsole\obj\Debug\net8.0\ref\SWConsole.dll
