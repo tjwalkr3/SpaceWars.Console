@@ -5,7 +5,7 @@ namespace SpaceWarsServices;
 
     class Program
     {
-        static void Main()
+        static async Task Main()
         {
             Console.WriteLine("Hello, World!");
 
@@ -25,8 +25,9 @@ namespace SpaceWarsServices;
                     // Prompt for name
                     Console.WriteLine("Please enter your name");
                     var username = Console.ReadLine();
-                    var results = service.JoinGameAsync(username);
+                    var results = await service.JoinGameAsync(username);
 
+                    Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Demensions: {results.BoardWidth}, {results.BoardHeight}, ");
                     // Join game and return player token and ship location, board info (saving these)
                     // You can call methods on the service to handle this part of the logic
 

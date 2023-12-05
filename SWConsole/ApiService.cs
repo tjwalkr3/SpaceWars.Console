@@ -17,7 +17,7 @@ namespace SpaceWarsServices;
         {
              try
             {
-                var response = await _httpClient.GetAsync($"join?name={Uri.EscapeDataString(name)}");
+                var response = await _httpClient.GetAsync($"/game/join?name={Uri.EscapeDataString(name)}");
 
                 response.EnsureSuccessStatusCode(); // Throw an exception if the status code is not a success code
 

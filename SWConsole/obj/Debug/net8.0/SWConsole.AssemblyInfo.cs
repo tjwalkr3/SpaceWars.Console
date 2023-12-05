@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SWConsole")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f7095824546cdad542d0e2075eac82278ca4804")]
 [assembly: System.Reflection.AssemblyProductAttribute("SWConsole")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SWConsole")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
