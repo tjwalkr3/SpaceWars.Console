@@ -20,13 +20,15 @@ namespace SpaceWarsServices;
                 try
                 {
                     // Create an instance of your ApiService (assuming ApiService takes HttpClient in its constructor)
-                    var service = new ApiService(httpClient);
 
                     // Prompt for name
+                    var currentHeading = 0;
+                    var service = new ApiService(httpClient, currentHeading);
                     Console.WriteLine("Please enter your name");
                     var username = Console.ReadLine();
                     var results = await service.JoinGameAsync(username);
-
+                        //potential if results has a starting heading pass that into the api
+                    
                     Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Demensions: {results.BoardWidth}, {results.BoardHeight}, ");
                     // Join game and return player token and ship location, board info (saving these)
                     // You can call methods on the service to handle this part of the logic
