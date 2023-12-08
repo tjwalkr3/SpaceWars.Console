@@ -57,18 +57,19 @@ namespace SpaceWarsServices
                     {
                         case ConsoleKey.W:
                             // Handle 'W' key
+                            await service.MoveForwardActionAsync(token);
                             break;
                         case ConsoleKey.A:
-                            service.ChangeHeadingAsync("left", token);
+                            await service.ChangeHeadingAsync("left", token);
                             break;
                         case ConsoleKey.S:
                             // Handle 'S' key
                             break;
                         case ConsoleKey.D:
-                            service.ChangeHeadingAsync("right", token);
+                            await service.ChangeHeadingAsync("right", token);
                             break;
                         case ConsoleKey.Spacebar:
-                            service.FireAsync(token, CurrentWeapon);
+                            await service.FireAsync(token, CurrentWeapon);
                             break;
                     }
                 }

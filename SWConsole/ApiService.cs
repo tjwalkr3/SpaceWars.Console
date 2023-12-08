@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using Newtonsoft.Json;
 
 namespace SpaceWarsServices;
@@ -40,34 +41,35 @@ public class ApiService
 
     public async Task ChangeHeadingAsync(string direction, string token)
     {
+        List<QueueActionRequest> request = null;
+        string url = $"/game/{token}/queue";
         // Need to add in the idea that currentHeading could be 360 or greater rather than =
         if (direction == "left")
         {
-            if (CurrentHeading == 0)
-            {
-                CurrentHeading = 360-15;
-                var response = await _httpClient.GetAsync($"/game/{token}/queue/[type=move,request={CurrentHeading}]");
-            }
-            else
-            {
-                CurrentHeading -= 15;
-                var response = await _httpClient.GetAsync($"/game/{token}/queue/[type=move,request={CurrentHeading}]");
-            }
+            CurrentHeading -= 15;
+            CurrentHeading = ClampRotation(CurrentHeading);
+            request = [new("move", CurrentHeading.ToString())];
+            var response = await _httpClient.PostAsJsonAsync(url, request);
+            response.EnsureSuccessStatusCode();
         }
         else
         {
-            if (CurrentHeading == 360)
-            {
-                CurrentHeading = 15;
-                var response = await _httpClient.GetAsync($"/game/{token}/queue/[type=move,request={CurrentHeading}]");
-            }
-            else
-            {
-                CurrentHeading += 15;
-                var response = await _httpClient.GetAsync($"/game/{token}/queue/[type=move,request={CurrentHeading}]");
-            }
-
+            CurrentHeading += 15;
+            CurrentHeading = ClampRotation(CurrentHeading);
+            request = [new("move", CurrentHeading.ToString())];
+            var response = await _httpClient.PostAsJsonAsync(url, request);
+            response.EnsureSuccessStatusCode();
         }
+        Console.WriteLine($"Current Heading: {CurrentHeading}");
+    }
+
+    public async Task MoveForwardActionAsync(string token)
+    {
+        List<QueueActionRequest> request = null;
+        string url = $"/game/{token}/queue";
+        request = [new("move", CurrentHeading.ToString())];
+        var response = await _httpClient.PostAsJsonAsync(url, request);
+        response.EnsureSuccessStatusCode();
         Console.WriteLine($"Current Heading: {CurrentHeading}");
     }
 
@@ -75,6 +77,14 @@ public class ApiService
     {
         var response = await _httpClient.GetAsync($"/game/{token}/queue/[type=fire,request={Weapon}]");
         Console.WriteLine("FIRE!");
+    }
+
+    private int ClampRotation(int rotation)
+    {
+        rotation = rotation % 360;
+        if (rotation < 0)
+            rotation += 360;
+        return rotation;
     }
 
 
