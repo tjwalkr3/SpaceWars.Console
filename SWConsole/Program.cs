@@ -37,7 +37,7 @@ namespace SpaceWarsServices
                     var results = await service.JoinGameAsync(username);
                     token = results.Token;
                     service.CurrentHeading = results.Heading;
-                    CurrentWeapon = "BasicCannon";
+                    CurrentWeapon = "Basic Cannon";
                     
                     Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
                     Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");

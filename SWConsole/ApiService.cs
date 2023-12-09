@@ -46,7 +46,7 @@ public class ApiService
         // Need to add in the idea that currentHeading could be 360 or greater rather than =
         if (direction == "left")
         {
-            CurrentHeading -= 15;
+            CurrentHeading -= 10;
             CurrentHeading = ClampRotation(CurrentHeading);
             request = [new("move", CurrentHeading.ToString())];
             var response = await _httpClient.PostAsJsonAsync(url, request);
@@ -54,7 +54,7 @@ public class ApiService
         }
         else
         {
-            CurrentHeading += 15;
+            CurrentHeading += 10;
             CurrentHeading = ClampRotation(CurrentHeading);
             request = [new("move", CurrentHeading.ToString())];
             var response = await _httpClient.PostAsJsonAsync(url, request);
@@ -75,8 +75,18 @@ public class ApiService
 
     public async Task FireAsync(string token, string Weapon)
     {
-        var response = await _httpClient.GetAsync($"/game/{token}/queue/[type=fire,request={Weapon}]");
-        Console.WriteLine("FIRE!");
+        List<QueueActionRequest> request = null;
+        request = [new("fire", Weapon)];
+        string url = $"/game/{token}/queue";
+        var response = await _httpClient.PostAsJsonAsync(url, request);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("FIRE!");
+        }
+        else
+        {
+            Console.WriteLine("Error: Unable to fire");
+        }
     }
 
     private int ClampRotation(int rotation)
