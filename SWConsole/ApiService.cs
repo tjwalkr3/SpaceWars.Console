@@ -48,7 +48,7 @@ public class ApiService
         {
             CurrentHeading -= 10;
             CurrentHeading = ClampRotation(CurrentHeading);
-            request = [new("move", CurrentHeading.ToString())];
+            request = [new("changeHeading", CurrentHeading.ToString())];
             var response = await _httpClient.PostAsJsonAsync(url, request);
             response.EnsureSuccessStatusCode();
         }
@@ -56,7 +56,7 @@ public class ApiService
         {
             CurrentHeading += 10;
             CurrentHeading = ClampRotation(CurrentHeading);
-            request = [new("move", CurrentHeading.ToString())];
+            request = [new("changeHeading", CurrentHeading.ToString())];
             var response = await _httpClient.PostAsJsonAsync(url, request);
             response.EnsureSuccessStatusCode();
         }
@@ -95,6 +95,21 @@ public class ApiService
         if (rotation < 0)
             rotation += 360;
         return rotation;
+    }
+
+    public async Task ClearQueue(string token)
+    {
+        string url = $"/game/{token}/queue/clear";
+        var response = await _httpClient.DeleteAsync(url);
+        response.EnsureSuccessStatusCode();
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Queue Cleared");
+        }
+        else
+        {
+            Console.WriteLine("Couldn't Clear Queue");
+        }
     }
 
 

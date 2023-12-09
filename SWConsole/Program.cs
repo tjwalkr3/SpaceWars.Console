@@ -71,6 +71,9 @@ namespace SpaceWarsServices
                         case ConsoleKey.Spacebar:
                             await service.FireAsync(token, CurrentWeapon);
                             break;
+                        case ConsoleKey.C:
+                            await service.ClearQueue(token);
+                            break;
                     }
                 }
             }
