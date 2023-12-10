@@ -74,6 +74,12 @@ public class GameActions
         await ApiService.QueueAction(Token, action);
     }
 
+    public async Task PurchaseItemAsync(string item)
+    {
+        List<QueueActionRequest> action = [new("purchase", item)];
+        await ApiService.QueueAction(Token, action);
+    }
+
     private int ClampRotation(int rotation)
     {
         rotation = rotation % 360;

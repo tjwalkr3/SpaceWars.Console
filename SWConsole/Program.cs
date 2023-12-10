@@ -26,7 +26,8 @@ class Program
             var currentHeading = 0;
             var token = "";
             var CurrentWeapon = "";
-            var service = new ApiService(httpClient, currentHeading);
+            var service = new ApiService(httpClient);
+            List<PurchasableItem> Shop = new List<PurchasableItem>();
 
             try
             {
@@ -34,9 +35,10 @@ class Program
                 var username = Console.ReadLine();
                 var results = await service.JoinGameAsync(username);
                 token = results.Token;
-                service.CurrentHeading = results.Heading;
                 CurrentWeapon = "Basic Cannon";
-                
+
+                Shop = results.Shop.Select(item => new PurchasableItem(item.Cost, item.Name, item.Prerequisites)).ToList();
+
                 Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
                 Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");
                 
@@ -71,10 +73,36 @@ class Program
                     case ConsoleKey.C:
                         await gameActions.ClearQueueAsync();
                         break;
+                    case ConsoleKey.U:
+                        foreach (var item in Shop)
+                        {
+                            Console.WriteLine($"upgrade: {item.Name}, cost: {item.Cost}");
+                        }
+                        break;
+                    case ConsoleKey.P:
+
+                        Console.WriteLine("please enter what you'd like to purchase from the shop, (if you've changed your mind enter x)");
+                        var response = Console.ReadLine();
+                        if (response == "x")
+                        {
+                            continue;
+                        }
+
+                        if (Shop.Any(item => item.Name.Equals(response, StringComparison.OrdinalIgnoreCase) ||
+                            (item.Prerequisites != null && item.Prerequisites.Contains(response, StringComparer.OrdinalIgnoreCase))))
+                        {
+                            await gameActions.PurchaseItemAsync(response);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid item. Please choose a valid item from the shop.");
+                        }
+                        break;
                 }
             }
         }
     }
+
     static void OpenUrlInBrowser(string url)
     {
         try
