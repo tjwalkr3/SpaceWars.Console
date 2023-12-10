@@ -1,11 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using System.Collections.Generic; // Import List<T>
-
-
-namespace SpaceWarsServices
+﻿namespace SpaceWarsServices
 {
     class Program
     {
@@ -31,7 +24,7 @@ namespace SpaceWarsServices
                 var service = new ApiService(httpClient, currentHeading);
                 var token = "";
                 var CurrentWeapon = "";
-                List<PurchaseableItem> Shop = new List<PurchaseableItem>(); ;
+                List<PurchasableItem> Shop = new List<PurchasableItem>(); ;
 
                 try
                 {
@@ -42,7 +35,7 @@ namespace SpaceWarsServices
                     service.CurrentHeading = results.Heading;
                     CurrentWeapon = "Basic Cannon";
 
-                    Shop = results.Shop.Select(item => new PurchaseableItem
+                    Shop = results.Shop.Select(item => new PurchasableItem
                     {
                         Cost = item.Cost,
                         Name = item.Name,
