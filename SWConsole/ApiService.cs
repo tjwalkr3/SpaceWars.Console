@@ -89,6 +89,22 @@ public class ApiService
         }
     }
 
+    public async Task RepairAsync(string token)
+    {
+        List<QueueActionRequest> request = null;
+        request = [new("repair", null)];
+        string url = $"/game/{token}/queue";
+        var response = await _httpClient.PostAsJsonAsync(url, request);
+        if (response.IsSuccessStatusCode)
+        {
+            Console.WriteLine("Repaired");
+        }
+        else
+        {
+            Console.WriteLine("Error: Unable to repair");
+        }
+    }
+
     private int ClampRotation(int rotation)
     {
         rotation = rotation % 360;
@@ -112,6 +128,11 @@ public class ApiService
         }
     }
 
+    public Task PurchaseAction(string token, string response)
+    {
+        throw new NotImplementedException();
+    }
+
 
     // public async Task<QueueActionResponse> QueueAction(string token, QueueActionRequest action)
     // {
@@ -124,7 +145,7 @@ public class ApiService
 
     //         content = await response.Content.ReadFromJsonAsync<QueueActionResponse>();
 
-            
+
     //     }
     //     catch(Exception ex)
     //     {

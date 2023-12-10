@@ -2,6 +2,8 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Collections.Generic; // Import List<T>
+
 
 namespace SpaceWarsServices
 {
@@ -29,6 +31,7 @@ namespace SpaceWarsServices
                 var service = new ApiService(httpClient, currentHeading);
                 var token = "";
                 var CurrentWeapon = "";
+                List<PurchaseableItem> Shop = new List<PurchaseableItem>(); ;
 
                 try
                 {
@@ -38,10 +41,17 @@ namespace SpaceWarsServices
                     token = results.Token;
                     service.CurrentHeading = results.Heading;
                     CurrentWeapon = "Basic Cannon";
-                    
+
+                    Shop = results.Shop.Select(item => new PurchaseableItem
+                    {
+                        Cost = item.Cost,
+                        Name = item.Name,
+                        PurchasePrerequisites = item.PurchasePrerequisites
+                    }).ToList();
+
                     Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
                     Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");
-                    
+
                     OpenUrlInBrowser($"{url}/hud?token={token}");
                 }
                 catch (Exception ex)
@@ -73,6 +83,35 @@ namespace SpaceWarsServices
                             break;
                         case ConsoleKey.C:
                             await service.ClearQueue(token);
+                            break;
+                        case ConsoleKey.R:
+                            await service.RepairAsync(token);
+                            break;
+                        case ConsoleKey.U:
+                            foreach (var item in Shop)
+                            {
+                                Console.WriteLine($"upgrade: {item.Name}, cost: {item.Cost}");
+                            }
+                            break;
+                        case ConsoleKey.P:
+                            Console.WriteLine("enter what you'd like to purphase from the shop, (if you've changed your mind enter x)");
+                            var response = Console.ReadLine();
+                            if (response == "x")
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                if (Shop.Any(item => item.Name.Equals(response, StringComparison.OrdinalIgnoreCase) ||
+                                                                  (item.PurchasePrerequisites != null && item.PurchasePrerequisites.Contains(response, StringComparer.OrdinalIgnoreCase))))
+                                {
+                                    await service.PurchaseAction(token, response);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid item. Please choose a valid item from the shop.");
+                                }
+                            }
                             break;
                     }
                 }
