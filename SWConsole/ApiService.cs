@@ -9,13 +9,9 @@ public class ApiService
 {
     private readonly HttpClient _httpClient;
 
-    public int CurrentHeading { get; set; }
-
-    public ApiService(HttpClient httpClient, int currentHeading)
+    public ApiService(HttpClient httpClient)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        CurrentHeading = currentHeading;
-
     }
 
     public async Task<JoinGameResponse> JoinGameAsync(string name)
@@ -39,100 +35,18 @@ public class ApiService
         }
     }
 
-    public async Task ChangeHeadingAsync(string direction, string token)
+    public async Task QueueAction(string token, List<QueueActionRequest> action)
     {
-        List<QueueActionRequest> request = null;
-        string url = $"/game/{token}/queue";
-        // Need to add in the idea that currentHeading could be 360 or greater rather than =
-        if (direction == "left")
+        try
         {
-            CurrentHeading -= 10;
-            CurrentHeading = ClampRotation(CurrentHeading);
-            request = [new("changeHeading", CurrentHeading.ToString())];
-            var response = await _httpClient.PostAsJsonAsync(url, request);
+            string url = $"/game/{token}/queue";
+            var response = await _httpClient.PostAsJsonAsync(url, action);
             response.EnsureSuccessStatusCode();
         }
-        else
+        catch (Exception ex)
         {
-            CurrentHeading += 10;
-            CurrentHeading = ClampRotation(CurrentHeading);
-            request = [new("changeHeading", CurrentHeading.ToString())];
-            var response = await _httpClient.PostAsJsonAsync(url, request);
-            response.EnsureSuccessStatusCode();
-        }
-        Console.WriteLine($"Current Heading: {CurrentHeading}");
-    }
-
-    public async Task MoveForwardActionAsync(string token)
-    {
-        List<QueueActionRequest> request = null;
-        string url = $"/game/{token}/queue";
-        request = [new("move", CurrentHeading.ToString())];
-        var response = await _httpClient.PostAsJsonAsync(url, request);
-        response.EnsureSuccessStatusCode();
-        Console.WriteLine($"Current Heading: {CurrentHeading}");
-    }
-
-    public async Task FireAsync(string token, string Weapon)
-    {
-        List<QueueActionRequest> request = null;
-        request = [new("fire", Weapon)];
-        string url = $"/game/{token}/queue";
-        var response = await _httpClient.PostAsJsonAsync(url, request);
-        if (response.IsSuccessStatusCode)
-        {
-            Console.WriteLine("FIRE!");
-        }
-        else
-        {
-            Console.WriteLine("Error: Unable to fire");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
-
-    private int ClampRotation(int rotation)
-    {
-        rotation = rotation % 360;
-        if (rotation < 0)
-            rotation += 360;
-        return rotation;
-    }
-
-    public async Task ClearQueue(string token)
-    {
-        string url = $"/game/{token}/queue/clear";
-        var response = await _httpClient.DeleteAsync(url);
-        response.EnsureSuccessStatusCode();
-        if (response.IsSuccessStatusCode)
-        {
-            Console.WriteLine("Queue Cleared");
-        }
-        else
-        {
-            Console.WriteLine("Couldn't Clear Queue");
-        }
-    }
-
-
-    // public async Task<QueueActionResponse> QueueAction(string token, QueueActionRequest action)
-    // {
-    //     QueueActionResponse content = null;
-    //     try
-    //     {
-    //         string url = $"/game/{token}/queue";
-    //         var response = await _httpClient.PostAsJsonAsync(url, action);
-    //         response.EnsureSuccessStatusCode();
-
-    //         content = await response.Content.ReadFromJsonAsync<QueueActionResponse>();
-
-            
-    //     }
-    //     catch(Exception ex)
-    //     {
-    //         Console.WriteLine($"Error: {ex.Message}");
-    //     }
-
-    //     if(content == null ) { return new("Error unable to find content for queue action"); }
-    //     return content;
-    // }
 
 }

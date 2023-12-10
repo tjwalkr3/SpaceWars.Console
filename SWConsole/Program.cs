@@ -2,92 +2,88 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using SWConsole;
 
-namespace SpaceWarsServices
+namespace SpaceWarsServices;
+
+class Program
 {
-    class Program
+    static void Main()
     {
-        static void Main()
+        MainAsync().Wait();
+    }
+
+    static async Task MainAsync()
+    {
+        Console.WriteLine("Please enter the URL to access Space Wars");
+        var url = Console.ReadLine();
+
+        bool exitGame = false;
+
+        using (HttpClient httpClient = new HttpClient())
         {
-            MainAsync().Wait();
-        }
+            httpClient.BaseAddress = new Uri(url);
+            var currentHeading = 0;
+            var token = "";
+            var CurrentWeapon = "";
+            var service = new ApiService(httpClient, currentHeading);
 
-        static async Task MainAsync()
-        {
-            Console.WriteLine("Hello, World!");
-
-            Console.WriteLine("Please enter the URL to access Space Wars");
-            var url = Console.ReadLine();
-
-
-            bool exitGame = false;
-
-            using (HttpClient httpClient = new HttpClient())
-            {
-                httpClient.BaseAddress = new Uri(url);
-                var currentHeading = 0;
-                var service = new ApiService(httpClient, currentHeading);
-                var token = "";
-                var CurrentWeapon = "";
-
-                try
-                {
-                    Console.WriteLine("Please enter your name");
-                    var username = Console.ReadLine();
-                    var results = await service.JoinGameAsync(username);
-                    token = results.Token;
-                    service.CurrentHeading = results.Heading;
-                    CurrentWeapon = "Basic Cannon";
-                    
-                    Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
-                    Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");
-                    
-                    OpenUrlInBrowser($"{url}/hud?token={token}");
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error: {ex.Message}");
-                }
-
-                while (!exitGame)
-                {
-                    ConsoleKeyInfo keyInfo = Console.ReadKey(true); // Read key without displaying it
-
-                    switch (keyInfo.Key)
-                    {
-                        case ConsoleKey.W:
-                            // Handle 'W' key
-                            await service.MoveForwardActionAsync(token);
-                            break;
-                        case ConsoleKey.A:
-                            await service.ChangeHeadingAsync("left", token);
-                            break;
-                        case ConsoleKey.S:
-                            // Handle 'S' key
-                            break;
-                        case ConsoleKey.D:
-                            await service.ChangeHeadingAsync("right", token);
-                            break;
-                        case ConsoleKey.Spacebar:
-                            await service.FireAsync(token, CurrentWeapon);
-                            break;
-                        case ConsoleKey.C:
-                            await service.ClearQueue(token);
-                            break;
-                    }
-                }
-            }
-        }
-        static void OpenUrlInBrowser(string url)
-        {
             try
             {
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                Console.WriteLine("Please enter your name");
+                var username = Console.ReadLine();
+                var results = await service.JoinGameAsync(username);
+                token = results.Token;
+                service.CurrentHeading = results.Heading;
+                CurrentWeapon = "Basic Cannon";
+                
+                Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
+                Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");
+                
+                OpenUrlInBrowser($"{url}/hud?token={token}");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error opening URL in browser: {ex.Message}");
+                Console.WriteLine($"Error: {ex.Message}");
             }
+
+            var gameActions = new GameActions(currentHeading, service, token);
+
+            while (!exitGame)
+            {
+                ConsoleKeyInfo keyInfo = Console.ReadKey(true); // Read key without displaying it
+                bool shiftPressed = keyInfo.Modifiers.HasFlag(ConsoleModifiers.Shift);
+
+                switch (keyInfo.Key)
+                {
+                    case ConsoleKey.W:
+                        await gameActions.MoveForwardAsync(shiftPressed);
+                        break;
+                    case ConsoleKey.A:
+                        await gameActions.RotateLeftAsync(shiftPressed);
+                        break;
+                    case ConsoleKey.D:
+                        await gameActions.RotateRightAsync(shiftPressed);
+                        break;
+                    case ConsoleKey.Spacebar:
+                        await gameActions.FireWeaponAsync(CurrentWeapon);
+                        break;
+                    case ConsoleKey.C:
+                        await gameActions.ClearQueueAsync();
+                        break;
+                }
+            }
+        }
+    }
+    static void OpenUrlInBrowser(string url)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error opening URL in browser: {ex.Message}");
         }
     }
 }
