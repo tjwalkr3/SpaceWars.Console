@@ -16,6 +16,9 @@ class Program
         var url = Console.ReadLine();
 
         bool exitGame = false;
+        const ConsoleKey defaultforwardKey = ConsoleKey.W, defaultleftKey = ConsoleKey.A, defaultrightKey = ConsoleKey.D, defaultfireKey = ConsoleKey.Spacebar, defaultclearQueueKey = ConsoleKey.C, defaultinfoKey = ConsoleKey.U, defaultshopKey = ConsoleKey.P;
+        ConsoleKey forwardKey = defaultforwardKey, leftKey = defaultleftKey, rightKey = defaultrightKey, fireKey = defaultfireKey, clearQueueKey = defaultclearQueueKey, infoKey = defaultinfoKey, shopKey = defaultshopKey;
+
 
         using (HttpClient httpClient = new HttpClient())
         {
@@ -30,6 +33,29 @@ class Program
             {
                 Console.WriteLine("Please enter your name");
                 var username = Console.ReadLine();
+
+                Console.WriteLine("Would you like to set your own key binding?\n or stick with the default?");
+                Console.WriteLine("Default: W,A,D,Space,C,U,P,Shift");
+                Console.WriteLine("Y or N: ");
+                var responseKeyQuestion = Console.ReadLine();
+                if (responseKeyQuestion.Equals("Y", StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine("What key would you like to move forward: ");
+                    forwardKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nhat key would you like to move left: ");
+                    leftKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nWhat key would you like to move right: ");
+                    rightKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nWhat key would you like to fire: ");
+                    fireKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nWhat key would you like to clear the queue: ");
+                    clearQueueKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nWhat key would you like to see upgrad info: ");
+                    infoKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nWhat key would you like to open the shop: ");
+                    shopKey = Console.ReadKey().Key;
+                }
+
                 var results = await service.JoinGameAsync(username);
                 token = results.Token;
                 CurrentWeapon = "Basic Cannon";
@@ -38,7 +64,7 @@ class Program
 
                 Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
                 Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");
-                
+
                 OpenUrlInBrowser($"{url}/hud?token={token}");
             }
             catch (Exception ex)
@@ -55,28 +81,28 @@ class Program
 
                 switch (keyInfo.Key)
                 {
-                    case ConsoleKey.W:
+                    case var key when key == forwardKey:
                         await gameActions.MoveForwardAsync(shiftPressed);
                         break;
-                    case ConsoleKey.A:
+                    case var key when key == leftKey:
                         await gameActions.RotateLeftAsync(shiftPressed);
                         break;
-                    case ConsoleKey.D:
+                    case var key when key == rightKey:
                         await gameActions.RotateRightAsync(shiftPressed);
                         break;
-                    case ConsoleKey.Spacebar:
+                    case var key when key == fireKey:
                         await gameActions.FireWeaponAsync(CurrentWeapon);
                         break;
-                    case ConsoleKey.C:
+                    case var key when key == clearQueueKey:
                         await gameActions.ClearQueueAsync();
                         break;
-                    case ConsoleKey.U:
+                    case var key when key == infoKey:
                         foreach (var item in Shop)
                         {
                             Console.WriteLine($"upgrade: {item.Name}, cost: {item.Cost}");
                         }
                         break;
-                    case ConsoleKey.P:
+                    case var key when key == shopKey:
 
                         Console.WriteLine("please enter what you'd like to purchase from the shop, (if you've changed your mind enter x)");
                         var response = Console.ReadLine();
