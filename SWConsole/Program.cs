@@ -1,4 +1,6 @@
-﻿namespace SpaceWarsServices
+﻿using System.Diagnostics;
+
+namespace SpaceWarsServices
 {
     class Program
     {
