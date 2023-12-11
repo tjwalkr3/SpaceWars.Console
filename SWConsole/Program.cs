@@ -16,8 +16,8 @@ class Program
         var url = Console.ReadLine();
 
         bool exitGame = false;
-        const ConsoleKey defaultforwardKey = ConsoleKey.W, defaultleftKey = ConsoleKey.A, defaultrightKey = ConsoleKey.D, defaultfireKey = ConsoleKey.Spacebar, defaultclearQueueKey = ConsoleKey.C, defaultinfoKey = ConsoleKey.U, defaultshopKey = ConsoleKey.P;
-        ConsoleKey forwardKey = defaultforwardKey, leftKey = defaultleftKey, rightKey = defaultrightKey, fireKey = defaultfireKey, clearQueueKey = defaultclearQueueKey, infoKey = defaultinfoKey, shopKey = defaultshopKey;
+        const ConsoleKey defaultforwardKey = ConsoleKey.W, defaultleftKey = ConsoleKey.A, defaultrightKey = ConsoleKey.D, defaultfireKey = ConsoleKey.Spacebar, defaultclearQueueKey = ConsoleKey.C, defaultinfoKey = ConsoleKey.U, defaultshopKey = ConsoleKey.P, defaultRepairKey = ConsoleKey.R;
+        ConsoleKey forwardKey = defaultforwardKey, leftKey = defaultleftKey, rightKey = defaultrightKey, fireKey = defaultfireKey, clearQueueKey = defaultclearQueueKey, infoKey = defaultinfoKey, shopKey = defaultshopKey, repairKey = defaultRepairKey;
 
 
         using (HttpClient httpClient = new HttpClient())
@@ -54,6 +54,8 @@ class Program
                     infoKey = Console.ReadKey().Key;
                     Console.WriteLine("\nWhat key would you like to open the shop: ");
                     shopKey = Console.ReadKey().Key;
+                    Console.WriteLine("\nWhat key would you like to repair: ");
+                    repairKey = Console.ReadKey().Key;
                 }
 
                 var results = await service.JoinGameAsync(username);
@@ -95,6 +97,9 @@ class Program
                         break;
                     case var key when key == clearQueueKey:
                         await gameActions.ClearQueueAsync();
+                        break;
+                    case var key when key == repairKey:
+                        await gameActions.RepairShipAsync();
                         break;
                     case var key when key == infoKey:
                         foreach (var item in Shop)
