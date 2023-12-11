@@ -49,4 +49,18 @@ public class ApiService
         }
     }
 
+    public async Task ClearAction(string token)
+    {
+        try
+        {
+            string url = $"/game/{token}/queue/clear";
+            var response = await _httpClient.DeleteAsync(url);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
 }

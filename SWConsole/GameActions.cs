@@ -70,8 +70,7 @@ public class GameActions
 
     public async Task ClearQueueAsync()
     {
-        List<QueueActionRequest> action = [new("clear", null)];
-        await ApiService.QueueAction(Token, action);
+        await ApiService.ClearAction(Token);
     }
 
     public async Task PurchaseItemAsync(string item)
