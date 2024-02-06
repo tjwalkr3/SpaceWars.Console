@@ -1,5 +1,5 @@
-﻿using System.Diagnostics;
-using SWConsole;
+﻿using SWConsole;
+using System.Diagnostics;
 
 namespace SpaceWarsServices;
 
@@ -7,20 +7,17 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        Uri baseAddress;
-        if (args.Length == 0)
-        {
-            Console.WriteLine("Please enter the URL to access Space Wars");
-            baseAddress = new Uri(Console.ReadLine());
-        }
-        else
-        {
-            baseAddress = new Uri(args[0]);
-        }
+        Uri baseAddress = getApiBaseAddress(args);
 
         bool exitGame = false;
-        const ConsoleKey defaultforwardKey = ConsoleKey.W, defaultleftKey = ConsoleKey.A, defaultrightKey = ConsoleKey.D, defaultfireKey = ConsoleKey.Spacebar, defaultclearQueueKey = ConsoleKey.C, defaultinfoKey = ConsoleKey.U, defaultshopKey = ConsoleKey.P, defaultRepairKey = ConsoleKey.R;
-        ConsoleKey forwardKey = defaultforwardKey, leftKey = defaultleftKey, rightKey = defaultrightKey, fireKey = defaultfireKey, clearQueueKey = defaultclearQueueKey, infoKey = defaultinfoKey, shopKey = defaultshopKey, repairKey = defaultRepairKey;
+        ConsoleKey forwardKey = ConsoleKey.W;
+        ConsoleKey leftKey = ConsoleKey.A;
+        ConsoleKey rightKey = ConsoleKey.D;
+        ConsoleKey fireKey = ConsoleKey.Spacebar;
+        ConsoleKey clearQueueKey = ConsoleKey.C;
+        ConsoleKey infoKey = ConsoleKey.I;
+        ConsoleKey shopKey = ConsoleKey.S;
+        ConsoleKey repairKey = ConsoleKey.R;
 
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
 
@@ -34,30 +31,6 @@ class Program
         {
             Console.WriteLine("Please enter your name");
             var username = Console.ReadLine();
-
-            Console.WriteLine("Press [1] to set your own key binding.\nPress any other key to stick with the default keys (W,A,D,Space,C,U,P,Shift)");
-                        
-            var responseKeyQuestion = Console.ReadLine();
-            if (responseKeyQuestion.Equals("1", StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine("What key would you like to move forward: ");
-                forwardKey = Console.ReadKey().Key;
-                Console.WriteLine("\nhat key would you like to move left: ");
-                leftKey = Console.ReadKey().Key;
-                Console.WriteLine("\nWhat key would you like to move right: ");
-                rightKey = Console.ReadKey().Key;
-                Console.WriteLine("\nWhat key would you like to fire: ");
-                fireKey = Console.ReadKey().Key;
-                Console.WriteLine("\nWhat key would you like to clear the queue: ");
-                clearQueueKey = Console.ReadKey().Key;
-                Console.WriteLine("\nWhat key would you like to see upgrad info: ");
-                infoKey = Console.ReadKey().Key;
-                Console.WriteLine("\nWhat key would you like to open the shop: ");
-                shopKey = Console.ReadKey().Key;
-                Console.WriteLine("\nWhat key would you like to repair: ");
-                repairKey = Console.ReadKey().Key;
-            }
-
             var results = await service.JoinGameAsync(username);
             token = results.Token;
             CurrentWeapon = "Basic Cannon";
@@ -128,6 +101,29 @@ class Program
                     break;
             }
         }
+    }
+
+    private static Uri getApiBaseAddress(string[] args)
+    {
+        Uri baseAddress;
+        if (args.Length == 0)
+        {
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Please enter the URL to access Space Wars");
+                    baseAddress = new Uri(Console.ReadLine());
+                    break;
+                }
+                catch { }
+            }
+        }
+        else
+        {
+            baseAddress = new Uri(args[0]);
+        }
+        return baseAddress;
     }
 
     static void OpenUrlInBrowser(string url)

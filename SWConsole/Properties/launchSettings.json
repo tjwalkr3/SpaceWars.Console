@@ -7,6 +7,9 @@
     "DevTunnel": {
       "commandName": "Project",
       "commandLineArgs": "https://cnmplrwp-7022.usw3.devtunnels.ms/"
+    },
+    "NoArgs": {
+      "commandName": "Project"
     }
   }
 }
