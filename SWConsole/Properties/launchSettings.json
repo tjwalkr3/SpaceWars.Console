@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SWConsole": {
+      "commandName": "Project",
+      "commandLineArgs": "https://localhost:7022/"
+    }
+  }
+}
