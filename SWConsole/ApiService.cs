@@ -1,13 +1,12 @@
-using System;
-using System.Net.Http;
-using System.Net.Http.Json;
 using Newtonsoft.Json;
+using System.Net.Http.Json;
 
 namespace SpaceWarsServices;
 
 public class ApiService
 {
     private readonly HttpClient _httpClient;
+    private string token;
 
     public ApiService(HttpClient httpClient)
     {
@@ -24,6 +23,7 @@ public class ApiService
 
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonConvert.DeserializeObject<JoinGameResponse>(content);
+            token = result.Token;
 
             return result;
         }
@@ -35,7 +35,7 @@ public class ApiService
         }
     }
 
-    public async Task QueueAction(string token, List<QueueActionRequest> action)
+    public async Task QueueAction(List<QueueActionRequest> action)
     {
         try
         {
@@ -49,7 +49,7 @@ public class ApiService
         }
     }
 
-    public async Task ClearAction(string token)
+    public async Task ClearAction()
     {
         try
         {

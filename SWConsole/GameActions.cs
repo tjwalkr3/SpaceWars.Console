@@ -24,7 +24,7 @@ public class GameActions
 
         Heading = ClampRotation(Heading);
         List<QueueActionRequest> action = [new("changeHeading", Heading.ToString())];
-        await ApiService.QueueAction(Token, action);
+        await ApiService.QueueAction(action);
     }
 
     public async Task RotateRightAsync(bool quickTurn)
@@ -36,7 +36,7 @@ public class GameActions
 
         Heading = ClampRotation(Heading);
         List<QueueActionRequest> action = [new("changeHeading", Heading.ToString())];
-        await ApiService.QueueAction(Token, action);
+        await ApiService.QueueAction(action);
     }
 
     public async Task MoveForwardAsync(bool lightSpeed)
@@ -44,7 +44,7 @@ public class GameActions
         List<QueueActionRequest> action = new();
         if (lightSpeed)
         {
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 action.Add(new("move", Heading.ToString()));
             }
@@ -53,30 +53,30 @@ public class GameActions
             action.Add(new("move", Heading.ToString()));
 
         Heading = ClampRotation(Heading);
-        await ApiService.QueueAction(Token, action);
+        await ApiService.QueueAction(action);
     }
 
     public async Task FireWeaponAsync(string weapon)
     {
         List<QueueActionRequest> action = [new("fire", weapon)];
-        await ApiService.QueueAction(Token, action);
+        await ApiService.QueueAction(action);
     }
 
     public async Task RepairShipAsync()
     {
         List<QueueActionRequest> action = [new("repair", null)];
-        await ApiService.QueueAction(Token, action);
+        await ApiService.QueueAction(action);
     }
 
     public async Task ClearQueueAsync()
     {
-        await ApiService.ClearAction(Token);
+        await ApiService.ClearAction();
     }
 
     public async Task PurchaseItemAsync(string item)
     {
         List<QueueActionRequest> action = [new("purchase", item)];
-        await ApiService.QueueAction(Token, action);
+        await ApiService.QueueAction(action);
     }
 
     private int ClampRotation(int rotation)
