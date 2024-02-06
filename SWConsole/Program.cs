@@ -10,9 +10,9 @@ class Program
         Uri baseAddress = getApiBaseAddress(args);
 
         bool exitGame = false;
-        ConsoleKey forwardKey = ConsoleKey.W;
-        ConsoleKey leftKey = ConsoleKey.A;
-        ConsoleKey rightKey = ConsoleKey.D;
+        ConsoleKey forwardKey = ConsoleKey.UpArrow;
+        ConsoleKey leftKey = ConsoleKey.LeftArrow;
+        ConsoleKey rightKey = ConsoleKey.RightArrow;
         ConsoleKey fireKey = ConsoleKey.Spacebar;
         ConsoleKey clearQueueKey = ConsoleKey.C;
         ConsoleKey infoKey = ConsoleKey.I;
