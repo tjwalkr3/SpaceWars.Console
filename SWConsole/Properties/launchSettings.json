@@ -1,8 +1,12 @@
 {
   "profiles": {
-    "SWConsole": {
+    "LocalDev": {
       "commandName": "Project",
       "commandLineArgs": "https://localhost:7022/"
+    },
+    "DevTunnel": {
+      "commandName": "Project",
+      "commandLineArgs": "https://cnmplrwp-7022.usw3.devtunnels.ms/"
     }
   }
 }
