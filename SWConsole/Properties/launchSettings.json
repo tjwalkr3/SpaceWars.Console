@@ -1,5 +1,9 @@
 {
   "profiles": {
+    "Azure": {
+      "commandName": "Project",
+      "commandLineArgs": "https://snowspacewars.azurewebsites.net/"
+    },
     "LocalDev": {
       "commandName": "Project",
       "commandLineArgs": "https://localhost:7022/"
