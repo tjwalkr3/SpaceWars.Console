@@ -7,37 +7,41 @@ class Program
 {
     static async Task Main(string[] args)
     {
+        //**************************************************************************************
+        //***  |    |    |    |                                            |    |    |    |    |
+        //***  |    |    |    |       Change your key mappings here        |    |    |    |    |
+        //***  V    V    V    V                                            V    V    V    V    V
+        //**************************************************************************************
+        const ConsoleKey forwardKey = ConsoleKey.UpArrow;
+        const ConsoleKey leftKey = ConsoleKey.LeftArrow;
+        const ConsoleKey rightKey = ConsoleKey.RightArrow;
+        const ConsoleKey fireKey = ConsoleKey.Spacebar;
+        const ConsoleKey clearQueueKey = ConsoleKey.C;
+        const ConsoleKey infoKey = ConsoleKey.I;
+        const ConsoleKey shopKey = ConsoleKey.S;
+        const ConsoleKey repairKey = ConsoleKey.R;
+        const ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
+
         Uri baseAddress = getApiBaseAddress(args);
-
-        bool exitGame = false;
-        ConsoleKey forwardKey = ConsoleKey.UpArrow;
-        ConsoleKey leftKey = ConsoleKey.LeftArrow;
-        ConsoleKey rightKey = ConsoleKey.RightArrow;
-        ConsoleKey fireKey = ConsoleKey.Spacebar;
-        ConsoleKey clearQueueKey = ConsoleKey.C;
-        ConsoleKey infoKey = ConsoleKey.I;
-        ConsoleKey shopKey = ConsoleKey.S;
-        ConsoleKey repairKey = ConsoleKey.R;
-        ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
-
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
-
+        bool exitGame = false;
         var currentHeading = 0;
         var token = "";
         var service = new ApiService(httpClient);
         List<PurchasableItem> Shop = new List<PurchasableItem>();
+        JoinGameResponse joinGameResponse = null;
 
+        Console.WriteLine("Please enter your name");
+        var username = Console.ReadLine();
         try
         {
-            Console.WriteLine("Please enter your name");
-            var username = Console.ReadLine();
-            var results = await service.JoinGameAsync(username);
-            token = results.Token;
+            joinGameResponse = await service.JoinGameAsync(username);
+            token = joinGameResponse.Token;
 
-            Shop = results.Shop.Select(item => new PurchasableItem(item.Cost, item.Name, item.Prerequisites)).ToList();
+            Shop = joinGameResponse.Shop.Select(item => new PurchasableItem(item.Cost, item.Name, item.Prerequisites)).ToList();
 
-            Console.WriteLine($"Token:{results.Token}, Heading: {results.Heading}");
-            Console.WriteLine($"Ship located at: {results.StartingLocation}, Game State is: {results.GameState}, Board Dimensions: {results.BoardWidth}, {results.BoardHeight}");
+            Console.WriteLine($"Token:{joinGameResponse.Token}, Heading: {joinGameResponse.Heading}");
+            Console.WriteLine($"Ship located at: {joinGameResponse.StartingLocation}, Game State is: {joinGameResponse.GameState}, Board Dimensions: {joinGameResponse.BoardWidth}, {joinGameResponse.BoardHeight}");
 
             OpenUrlInBrowser($"{baseAddress.AbsoluteUri}hud?token={token}");
         }
@@ -46,12 +50,13 @@ class Program
             Console.WriteLine($"Error: {ex.Message}");
         }
 
-        var gameActions = new GameActions(currentHeading, service);
+        var gameActions = new GameActions(username, joinGameResponse, service);
         gameActions.Weapons.Add("Basic Cannon");
         gameActions.CurrentWeapon = "Basic Cannon";
 
         while (!exitGame)
         {
+            printStatus();
             ConsoleKeyInfo keyInfo = Console.ReadKey(true); // Read key without displaying it
             bool shiftPressed = keyInfo.Modifiers.HasFlag(ConsoleModifiers.Shift);
 
@@ -80,6 +85,8 @@ class Program
                     foreach (var item in Shop)
                     {
                         Console.WriteLine($"upgrade: {item.Name}, cost: {item.Cost}");
+                        Console.WriteLine("Press any key to continue.");
+                        Console.ReadKey();
                     }
                     break;
                 case var key when key == shopKey:
@@ -109,9 +116,50 @@ class Program
                     gameActions.SelectWeapon(key);
                     Console.WriteLine($"Selected weapon {((char)key) - '1'} ({gameActions.CurrentWeapon}");
                     break;
+                //**************************************************************************************
+                //***  |    |    |    |                                            |    |    |    |    |
+                //***  |    |    |    |       Add any other custom keys here       |    |    |    |    |
+                //***  V    V    V    V                                            V    V    V    V    V
+                //**************************************************************************************
+                case ConsoleKey.N:
+                    //example
+                    break;
             }
         }
+
+        void printStatus()
+        {
+            Console.Clear();
+            Console.WriteLine($"Name: {username,-34} Token: {gameActions.Token}");
+            Console.WriteLine($"Left: {leftKey,-12} Right: {rightKey,-12} Forward: {forwardKey,-12} Fire: {fireKey,-12} Clear Queue: {clearQueueKey,-12}");
+            Console.WriteLine($"Info: {infoKey,-12}  Shop: {shopKey,-12}  Repair: {repairKey,-12} Read & Empty Messages: {readAndEmptyMessagesKey,-12}");
+
+            for (int i = 0; i < gameActions.Weapons.Count; i++)
+            {
+                string? weapon = gameActions.Weapons[i];
+                if (weapon == gameActions.CurrentWeapon)
+                {
+                    weapon = $"**{weapon}**";
+                }
+                Console.Write($"{i + 1}: {weapon}   ");
+            }
+            Console.WriteLine();
+
+
+            if (gameActions.GameMessages.Any())
+            {
+                Console.WriteLine();
+                Console.WriteLine("Last 10 messages:");
+                Console.WriteLine(new string('-', Console.WindowWidth));
+                foreach (var msg in gameActions.GameMessages.TakeLast(10))
+                {
+                    Console.WriteLine($"{msg.Type,-30} {msg.Message}");
+                }
+            }
+            Console.WriteLine(new string('=', Console.WindowWidth));
+        }
     }
+
 
     private static Uri getApiBaseAddress(string[] args)
     {

@@ -3,8 +3,19 @@
 namespace SWConsole;
 public enum Direction { Right, Left }
 
-public class GameActions(int heading, ApiService apiService)
+public class GameActions
 {
+    private readonly JoinGameResponse joinGameResponse;
+    private readonly ApiService apiService;
+    private int heading;
+
+    public GameActions(string playerName, JoinGameResponse joinGameResponse, ApiService apiService)
+    {
+        this.joinGameResponse = joinGameResponse;
+        this.apiService = apiService;
+        heading = joinGameResponse.Heading;
+        PlayerName = playerName;
+    }
     public async Task RotateLeftAsync(bool quickTurn) => await rotate(Direction.Left, quickTurn);
 
     public async Task RotateRightAsync(bool quickTurn) => await rotate(Direction.Right, quickTurn);
@@ -50,6 +61,7 @@ public class GameActions(int heading, ApiService apiService)
     internal async Task ReadAndEmptyMessagesAsync()
     {
         var messages = await apiService.ReadAndEmptyMessages();
+        GameMessages.AddRange(messages);
         //add weapons
         foreach (var weaponPurchaseMessage in messages.Where(m => m.Type == "SuccessfulWeaponPurchase"))
         {
@@ -69,6 +81,9 @@ public class GameActions(int heading, ApiService apiService)
 
     public List<string> Weapons { get; set; } = new();
     public string CurrentWeapon { get; set; }
+    public List<GameMessage> GameMessages { get; set; } = new();
+    public string PlayerName { get; set; }
+    public string Token => joinGameResponse.Token;
 }
 
 public static class IEnumerableExtensions
