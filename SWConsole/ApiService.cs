@@ -35,7 +35,7 @@ public class ApiService
         }
     }
 
-    public async Task QueueAction(List<QueueActionRequest> action)
+    public async Task QueueAction(IEnumerable<QueueActionRequest> action)
     {
         try
         {
@@ -63,4 +63,17 @@ public class ApiService
         }
     }
 
+    public async Task<IEnumerable<GameMessage>> ReadAndEmptyMessages()
+    {
+        try
+        {
+            string url = $"/game/playermessages?token={token}";
+            return await _httpClient.GetFromJsonAsync<IEnumerable<GameMessage>>(url);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return null;
+        }
+    }
 }

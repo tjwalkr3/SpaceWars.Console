@@ -8,3 +8,4 @@ public record QueueActionRequest(string Type, string? Request);
 public record QueueActionResponse(string Message);
 public record ShopResponse(int Cost, string Name, IEnumerable<string> Prerequisites);
 public record PurchasableItem(int Cost, string Name, IEnumerable<string> Prerequisites);
+public record GameMessage(string Type, string Message);

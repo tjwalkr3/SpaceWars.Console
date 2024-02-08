@@ -1,89 +1,82 @@
 ﻿using SpaceWarsServices;
 
 namespace SWConsole;
+public enum Direction { Right, Left }
 
-public class GameActions
+public class GameActions(int heading, ApiService apiService)
 {
-    private int Heading;
-    private ApiService ApiService;
-    private string Token;
+    public async Task RotateLeftAsync(bool quickTurn) => await rotate(Direction.Left, quickTurn);
 
-    public GameActions(int heading, ApiService apiService, string token)
+    public async Task RotateRightAsync(bool quickTurn) => await rotate(Direction.Right, quickTurn);
+
+    private async Task rotate(Direction direction, bool quickTurn)
     {
-        Heading = heading;
-        ApiService = apiService;
-        Token = token;
-    }
-
-    public async Task RotateLeftAsync(bool quickTurn)
-    {
-        if (quickTurn)
-            Heading -= 10;
-        else
-            Heading -= 1;
-
-        Heading = ClampRotation(Heading);
-        List<QueueActionRequest> action = [new("changeHeading", Heading.ToString())];
-        await ApiService.QueueAction(action);
-    }
-
-    public async Task RotateRightAsync(bool quickTurn)
-    {
-        if (quickTurn)
-            Heading += 10;
-        else
-            Heading += 1;
-
-        Heading = ClampRotation(Heading);
-        List<QueueActionRequest> action = [new("changeHeading", Heading.ToString())];
-        await ApiService.QueueAction(action);
+        heading = (direction, quickTurn) switch
+        {
+            (Direction.Right, true) => heading + 10,
+            (Direction.Right, false) => heading + 1,
+            (Direction.Left, true) => heading - 10,
+            (Direction.Left, false) => heading - 1,
+            _ => 0,//turn north if someone calls this with a bogus Direction
+        };
+        heading = ClampRotation(heading);
+        await apiService.QueueAction([new("changeHeading", heading.ToString())]);
     }
 
     public async Task MoveForwardAsync(bool lightSpeed)
     {
-        List<QueueActionRequest> action = new();
-        if (lightSpeed)
+        heading = ClampRotation(heading);
+        var actions = Enumerable.Range(0, lightSpeed ? 10 : 1)
+                .Select(n => new QueueActionRequest("move", heading.ToString()));
+        await apiService.QueueAction(actions);
+    }
+
+    public async Task FireWeaponAsync(string? weapon = null) => await apiService.QueueAction([new("fire", weapon ?? CurrentWeapon)]);
+
+    public async Task RepairShipAsync() => await apiService.QueueAction([new("repair", null)]);
+
+    public async Task ClearQueueAsync() => await apiService.ClearAction();
+
+    public async Task PurchaseItemAsync(string item) => await apiService.QueueAction([new("purchase", item)]);
+
+    private static int ClampRotation(int degrees)
+    {
+        degrees %= 360;
+        if (degrees < 0)
+            degrees += 360;
+        return degrees;
+    }
+
+    internal async Task ReadAndEmptyMessagesAsync()
+    {
+        var messages = await apiService.ReadAndEmptyMessages();
+        //add weapons
+        foreach (var weaponPurchaseMessage in messages.Where(m => m.Type == "SuccessfulWeaponPurchase"))
         {
-            for (int i = 0; i < 10; i++)
-            {
-                action.Add(new("move", Heading.ToString()));
-            }
+            Weapons.Add(weaponPurchaseMessage.Message);
         }
-        else
-            action.Add(new("move", Heading.ToString()));
-
-        Heading = ClampRotation(Heading);
-        await ApiService.QueueAction(action);
     }
 
-    public async Task FireWeaponAsync(string weapon)
+    internal void SelectWeapon(ConsoleKey key)
     {
-        List<QueueActionRequest> action = [new("fire", weapon)];
-        await ApiService.QueueAction(action);
+        char c = (char)key;
+        int index = c - '1';
+        if (Weapons.Count > index)
+        {
+            CurrentWeapon = Weapons[index];
+        }
     }
 
-    public async Task RepairShipAsync()
-    {
-        List<QueueActionRequest> action = [new("repair", null)];
-        await ApiService.QueueAction(action);
-    }
+    public List<string> Weapons { get; set; } = new();
+    public string CurrentWeapon { get; set; }
+}
 
-    public async Task ClearQueueAsync()
+public static class IEnumerableExtensions
+{
+    public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
     {
-        await ApiService.ClearAction();
-    }
-
-    public async Task PurchaseItemAsync(string item)
-    {
-        List<QueueActionRequest> action = [new("purchase", item)];
-        await ApiService.QueueAction(action);
-    }
-
-    private int ClampRotation(int rotation)
-    {
-        rotation = rotation % 360;
-        if (rotation < 0)
-            rotation += 360;
-        return rotation;
+        foreach (var item in source)
+            action(item);
     }
 }
+

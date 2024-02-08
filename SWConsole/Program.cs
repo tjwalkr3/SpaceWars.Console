@@ -18,12 +18,12 @@ class Program
         ConsoleKey infoKey = ConsoleKey.I;
         ConsoleKey shopKey = ConsoleKey.S;
         ConsoleKey repairKey = ConsoleKey.R;
+        ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
 
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
 
         var currentHeading = 0;
         var token = "";
-        var CurrentWeapon = "";
         var service = new ApiService(httpClient);
         List<PurchasableItem> Shop = new List<PurchasableItem>();
 
@@ -33,7 +33,6 @@ class Program
             var username = Console.ReadLine();
             var results = await service.JoinGameAsync(username);
             token = results.Token;
-            CurrentWeapon = "Basic Cannon";
 
             Shop = results.Shop.Select(item => new PurchasableItem(item.Cost, item.Name, item.Prerequisites)).ToList();
 
@@ -47,7 +46,9 @@ class Program
             Console.WriteLine($"Error: {ex.Message}");
         }
 
-        var gameActions = new GameActions(currentHeading, service, token);
+        var gameActions = new GameActions(currentHeading, service);
+        gameActions.Weapons.Add("Basic Cannon");
+        gameActions.CurrentWeapon = "Basic Cannon";
 
         while (!exitGame)
         {
@@ -66,13 +67,14 @@ class Program
                     await gameActions.RotateRightAsync(shiftPressed);
                     break;
                 case var key when key == fireKey:
-                    await gameActions.FireWeaponAsync(CurrentWeapon);
+                    await gameActions.FireWeaponAsync();
                     break;
                 case var key when key == clearQueueKey:
                     await gameActions.ClearQueueAsync();
                     break;
                 case var key when key == repairKey:
                     await gameActions.RepairShipAsync();
+                    Console.WriteLine("Ship repair requested.");
                     break;
                 case var key when key == infoKey:
                     foreach (var item in Shop)
@@ -89,15 +91,23 @@ class Program
                         continue;
                     }
 
-                    if (Shop.Any(item => item.Name.Equals(response, StringComparison.OrdinalIgnoreCase) ||
-                        (item.Prerequisites != null && item.Prerequisites.Contains(response, StringComparer.OrdinalIgnoreCase))))
+                    if (Shop.Any(item => item.Name.Equals(response, StringComparison.OrdinalIgnoreCase)))
                     {
                         await gameActions.PurchaseItemAsync(response);
+                        Console.WriteLine($"Purchase of {response} requested.");
                     }
                     else
                     {
                         Console.WriteLine("Invalid item. Please choose a valid item from the shop.");
                     }
+                    break;
+                case var key when key == readAndEmptyMessagesKey:
+                    await gameActions.ReadAndEmptyMessagesAsync();
+                    Console.WriteLine("Message queue read.");
+                    break;
+                case var key when key >= ConsoleKey.D0 && key <= ConsoleKey.D9:
+                    gameActions.SelectWeapon(key);
+                    Console.WriteLine($"Selected weapon {((char)key) - '1'} ({gameActions.CurrentWeapon}");
                     break;
             }
         }
