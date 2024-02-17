@@ -1,7 +1,7 @@
 ﻿using SpaceWarsServices;
 
 namespace SWConsole;
-public enum Direction { Right, Left }
+public enum Direction { Right, Left, Invert }
 
 public class GameActions
 {
@@ -20,6 +20,8 @@ public class GameActions
 
     public async Task RotateRightAsync(bool quickTurn) => await rotate(Direction.Right, quickTurn);
 
+    public async Task InvertAsync() => await rotate(Direction.Invert, true);
+
     private async Task rotate(Direction direction, bool quickTurn)
     {
         heading = (direction, quickTurn) switch
@@ -28,6 +30,7 @@ public class GameActions
             (Direction.Right, false) => heading + 1,
             (Direction.Left, true) => heading - 10,
             (Direction.Left, false) => heading - 1,
+            (Direction.Invert, false) => heading - 180, // Turn the ship around
             _ => 0,//turn north if someone calls this with a bogus Direction
         };
         heading = ClampRotation(heading);
