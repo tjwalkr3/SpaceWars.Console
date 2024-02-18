@@ -22,7 +22,7 @@ class Program
         const ConsoleKey rightFastKey = ConsoleKey.D;
         const ConsoleKey fireKey = ConsoleKey.Spacebar;
         const ConsoleKey clearQueueKey = ConsoleKey.C;
-        const ConsoleKey randomWalkKey = ConsoleKey.R;
+        const ConsoleKey randomWalkKey = ConsoleKey.Q;
         const ConsoleKey infoKey = ConsoleKey.I;
         const ConsoleKey shopKey = ConsoleKey.F;
         const ConsoleKey repairKey = ConsoleKey.R;
@@ -176,29 +176,16 @@ class Program
 
             for (int i = 0; i < numOfActions; i++)
             {
-                int num = rnd.Next(6);
-                switch (num)
-                {
-                    case 0:
-                        await gameActions.MoveForwardAsync(1);
-                        break;
-                    case 1:
-                        await gameActions.Rotate(Direction.Left, 30);
-                        break;
-                    case 2:
-                        await gameActions.Rotate(Direction.Right, 30);
-                        break;
-                    case 3:
-                        await gameActions.Rotate(Direction.Right, 20);
-                        break;
-                    case 4:
-                        await gameActions.Rotate(Direction.Left, 20);
-                        break;
-                    case 5:
-                        await gameActions.Rotate(Direction.Left, 180);
-                        break;
-                }
-                await gameActions.MoveForwardAsync(10);
+                bool leftRight = rnd.Next(2) == 0;
+                int angle = rnd.Next(360);
+                int distance = rnd.Next(15);
+
+                if (leftRight)
+                    await gameActions.Rotate(Direction.Left, angle);
+                else
+                    await gameActions.Rotate(Direction.Right, angle);
+
+                await gameActions.MoveForwardAsync(distance);
             }
         }
 
