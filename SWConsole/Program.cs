@@ -100,7 +100,10 @@ class Program
                     await gameActions.Rotate(Direction.Right, 1);
                     break;
                 case var key when key == rightFastKey:
-                    await gameActions.Rotate(Direction.Right, 10);
+                    if (shiftPressed)
+                        await gameActions.Rotate(Direction.Right, 45);
+                    else
+                        await gameActions.Rotate(Direction.Right, 10);
                     break;
                 case var key when key == fireKey:
                     await gameActions.FireWeaponAsync();
