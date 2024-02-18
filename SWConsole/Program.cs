@@ -82,7 +82,10 @@ class Program
                     break;
                 case var key when key == backFastKey:
                     await gameActions.InvertAsync();
-                    await gameActions.MoveForwardAsync(10);
+                    if (shiftPressed)
+                        await gameActions.MoveForwardAsync(20);
+                    else
+                        await gameActions.MoveForwardAsync(10);
                     break;
                 case var key when key == leftKey:
                     await gameActions.RotateLeftAsync(false);
