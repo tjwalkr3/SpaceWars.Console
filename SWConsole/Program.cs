@@ -22,7 +22,6 @@ class Program
         const ConsoleKey rightFastKey = ConsoleKey.D;
         const ConsoleKey fireKey = ConsoleKey.Spacebar;
         const ConsoleKey clearQueueKey = ConsoleKey.C;
-        const ConsoleKey randomWalkKey = ConsoleKey.Q;
         const ConsoleKey infoKey = ConsoleKey.I;
         const ConsoleKey shopKey = ConsoleKey.F;
         const ConsoleKey repairKey = ConsoleKey.R;
@@ -31,6 +30,8 @@ class Program
         const ConsoleKey triangleKey = ConsoleKey.F1;
         const ConsoleKey squareKey = ConsoleKey.F2;
         const ConsoleKey octagonKey = ConsoleKey.F3;
+        const ConsoleKey thirtygonKey = ConsoleKey.F4;
+        const ConsoleKey randomWalkKey = ConsoleKey.F5;
 
         Uri baseAddress = getApiBaseAddress(args);
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
@@ -190,6 +191,9 @@ class Program
                 case var key when key == octagonKey:
                     Polygon(gameActions, 8, 20);
                     break;
+                case var key when key == thirtygonKey:
+                    Polygon(gameActions, 30, 10);
+                    break;
             }
         }
 
@@ -229,7 +233,8 @@ class Program
             Console.WriteLine($"Name: {username,-32} Token: {gameActions.Token}");
             Console.WriteLine($"Left: {leftKey,-12} Right: {rightKey,-12} Forward: {forwardKey,-12} Fire: {fireKey,-24} Clear Queue: {clearQueueKey,-6}");
             Console.WriteLine($"Fast Left: {leftFastKey,-7} Fast Right: {rightFastKey,-7} Fast Forward: {forwardFastKey,-7} Rapid Fire: Shift+{fireKey,-12} Fast Repair: {repairFastKey,-6}");
-            Console.WriteLine($"Info: {infoKey,-11}  Shop: {shopKey,-12}  Repair: {repairKey,-13} Read & Empty Messages: {readAndEmptyMessagesKey,-6}  Random Walk: {randomWalkKey,-6}");
+            Console.WriteLine($"Info: {infoKey,-11}  Shop: {shopKey,-12}  Repair: {repairKey,-13} Read & Empty Messages: {readAndEmptyMessagesKey,-6}");
+            Console.WriteLine($"\nEvasive Maneuvers:\nTriangle: {triangleKey,-7}  Square: {squareKey,-10}  Octagon: {octagonKey,-12} Thirtygon: {thirtygonKey,-19} Random Walk: {randomWalkKey,-6}\n");
 
             for (int i = 0; i < gameActions.Weapons.Count; i++)
             {
