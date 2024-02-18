@@ -15,6 +15,7 @@ class Program
         const ConsoleKey forwardKey = ConsoleKey.UpArrow;
         const ConsoleKey forwardFastKey = ConsoleKey.W;
         const ConsoleKey backKey = ConsoleKey.DownArrow;
+        const ConsoleKey backFastKey = ConsoleKey.S;
         const ConsoleKey leftKey = ConsoleKey.LeftArrow;
         const ConsoleKey leftFastKey = ConsoleKey.A;
         const ConsoleKey rightKey = ConsoleKey.RightArrow;
@@ -74,6 +75,11 @@ class Program
                     break;
                 case var key when key == backKey:
                     await gameActions.InvertAsync();
+                    await gameActions.MoveForwardAsync(1);
+                    break;
+                case var key when key == backFastKey:
+                    await gameActions.InvertAsync();
+                    await gameActions.MoveForwardAsync(10);
                     break;
                 case var key when key == leftKey:
                     await gameActions.RotateLeftAsync(false);
