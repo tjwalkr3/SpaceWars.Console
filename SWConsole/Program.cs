@@ -77,27 +77,27 @@ class Program
                         await gameActions.MoveForwardAsync(10);
                     break;
                 case var key when key == backKey:
-                    await gameActions.InvertAsync();
+                    await gameActions.Rotate(Direction.Left, 180);
                     await gameActions.MoveForwardAsync(1);
                     break;
                 case var key when key == backFastKey:
-                    await gameActions.InvertAsync();
+                    await gameActions.Rotate(Direction.Left, 180);
                     if (shiftPressed)
                         await gameActions.MoveForwardAsync(20);
                     else
                         await gameActions.MoveForwardAsync(10);
                     break;
                 case var key when key == leftKey:
-                    await gameActions.RotateLeftAsync(false);
+                    await gameActions.Rotate(Direction.Left, 1);
                     break;
                 case var key when key == leftFastKey:
-                    await gameActions.RotateLeftAsync(true);
+                    await gameActions.Rotate(Direction.Left, 10);
                     break;
                 case var key when key == rightKey:
-                    await gameActions.RotateRightAsync(false);
+                    await gameActions.Rotate(Direction.Right, 1);
                     break;
                 case var key when key == rightFastKey:
-                    await gameActions.RotateRightAsync(true);
+                    await gameActions.Rotate(Direction.Right, 10);
                     break;
                 case var key when key == fireKey:
                     await gameActions.FireWeaponAsync();

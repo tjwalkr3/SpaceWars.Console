@@ -16,21 +16,13 @@ public class GameActions
         heading = joinGameResponse.Heading;
         PlayerName = playerName;
     }
-    public async Task RotateLeftAsync(bool quickTurn) => await rotate(Direction.Left, quickTurn);
 
-    public async Task RotateRightAsync(bool quickTurn) => await rotate(Direction.Right, quickTurn);
-
-    public async Task InvertAsync() => await rotate(Direction.Invert, true);
-
-    private async Task rotate(Direction direction, bool quickTurn)
+    public async Task Rotate(Direction direction, int amount)
     {
-        heading = (direction, quickTurn) switch
+        heading = (direction) switch
         {
-            (Direction.Right, true) => heading + 10,
-            (Direction.Right, false) => heading + 1,
-            (Direction.Left, true) => heading - 10,
-            (Direction.Left, false) => heading - 1,
-            (Direction.Invert, true) => heading - 180, // Turn the ship around
+            (Direction.Right) => heading + amount,
+            (Direction.Left) => heading - amount,
             _ => 0,//turn north if someone calls this with a bogus Direction
         };
         heading = ClampRotation(heading);
