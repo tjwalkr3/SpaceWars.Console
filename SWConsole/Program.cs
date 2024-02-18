@@ -22,6 +22,7 @@ class Program
         const ConsoleKey rightFastKey = ConsoleKey.D;
         const ConsoleKey fireKey = ConsoleKey.Spacebar;
         const ConsoleKey clearQueueKey = ConsoleKey.C;
+        const ConsoleKey randomWalkKey = ConsoleKey.R;
         const ConsoleKey infoKey = ConsoleKey.I;
         const ConsoleKey shopKey = ConsoleKey.F;
         const ConsoleKey repairKey = ConsoleKey.R;
@@ -154,7 +155,7 @@ class Program
                     await gameActions.ReadAndEmptyMessagesAsync();
                     Console.WriteLine("Message queue read.");
                     break;
-                case var key when key >= ConsoleKey.D0 && key <= ConsoleKey.D9:
+                case var key when key >= ConsoleKey.D0 && key <= ConsoleKey.D9: // The 0 key through the 9 key
                     gameActions.SelectWeapon(key);
                     Console.WriteLine($"Selected weapon {((char)key) - '1'} ({gameActions.CurrentWeapon}");
                     break;
@@ -163,9 +164,41 @@ class Program
                 //***  |    |    |    |       Add any other custom keys here       |    |    |    |    |
                 //***  V    V    V    V                                            V    V    V    V    V
                 //**************************************************************************************
-                case ConsoleKey.N:
-                    //example
+                case var key when key == randomWalkKey:
+                    RandomWalk(gameActions, 20);
                     break;
+            }
+        }
+
+        async void RandomWalk(GameActions gameActions, int numOfActions)
+        {
+            Random rnd = new Random();
+
+            for (int i = 0; i < numOfActions; i++)
+            {
+                int num = rnd.Next(6);
+                switch (num)
+                {
+                    case 0:
+                        await gameActions.MoveForwardAsync(1);
+                        break;
+                    case 1:
+                        await gameActions.Rotate(Direction.Left, 30);
+                        break;
+                    case 2:
+                        await gameActions.Rotate(Direction.Right, 30);
+                        break;
+                    case 3:
+                        await gameActions.Rotate(Direction.Right, 20);
+                        break;
+                    case 4:
+                        await gameActions.Rotate(Direction.Left, 20);
+                        break;
+                    case 5:
+                        await gameActions.Rotate(Direction.Left, 180);
+                        break;
+                }
+                await gameActions.MoveForwardAsync(10);
             }
         }
 
