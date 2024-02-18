@@ -29,6 +29,7 @@ class Program
         const ConsoleKey repairFastKey = ConsoleKey.Tab;
         const ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
         const ConsoleKey triangleKey = ConsoleKey.F1;
+        const ConsoleKey squareKey = ConsoleKey.F2;
 
         Uri baseAddress = getApiBaseAddress(args);
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
@@ -181,6 +182,9 @@ class Program
                     break;
                 case var key when key == triangleKey:
                     Polygon(gameActions, 3, 30);
+                    break;
+                case var key when key == squareKey:
+                    Polygon(gameActions, 4, 30);
                     break;
             }
         }
