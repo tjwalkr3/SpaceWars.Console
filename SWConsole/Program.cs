@@ -28,6 +28,7 @@ class Program
         const ConsoleKey repairKey = ConsoleKey.R;
         const ConsoleKey repairFastKey = ConsoleKey.Tab;
         const ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
+        const ConsoleKey triangleKey = ConsoleKey.F1;
 
         Uri baseAddress = getApiBaseAddress(args);
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
@@ -178,6 +179,9 @@ class Program
                     else
                         RandomWalk(gameActions, 20);
                     break;
+                case var key when key == triangleKey:
+                    Polygon(gameActions, 3, 30);
+                    break;
             }
         }
 
@@ -197,6 +201,17 @@ class Program
                     await gameActions.Rotate(Direction.Right, angle);
 
                 await gameActions.MoveForwardAsync(distance);
+            }
+        }
+
+        async void Polygon(GameActions gameActions, int numOfSides, int sideLength)
+        {
+            Random rnd = new Random();
+
+            for (int i = 0; i < numOfSides; i++)
+            {
+                await gameActions.MoveForwardAsync(sideLength);
+                await gameActions.Rotate(Direction.Right, (360 / numOfSides));
             }
         }
 
