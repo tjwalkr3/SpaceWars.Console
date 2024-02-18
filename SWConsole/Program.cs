@@ -30,6 +30,7 @@ class Program
         const ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
         const ConsoleKey triangleKey = ConsoleKey.F1;
         const ConsoleKey squareKey = ConsoleKey.F2;
+        const ConsoleKey octagonKey = ConsoleKey.F3;
 
         Uri baseAddress = getApiBaseAddress(args);
         using HttpClient httpClient = new HttpClient() { BaseAddress = baseAddress };
@@ -185,6 +186,9 @@ class Program
                     break;
                 case var key when key == squareKey:
                     Polygon(gameActions, 4, 30);
+                    break;
+                case var key when key == octagonKey:
+                    Polygon(gameActions, 8, 20);
                     break;
             }
         }
