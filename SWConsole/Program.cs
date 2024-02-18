@@ -91,7 +91,10 @@ class Program
                     await gameActions.Rotate(Direction.Left, 1);
                     break;
                 case var key when key == leftFastKey:
-                    await gameActions.Rotate(Direction.Left, 10);
+                    if (shiftPressed)
+                        await gameActions.Rotate(Direction.Left, 45);
+                    else
+                        await gameActions.Rotate(Direction.Left, 10);
                     break;
                 case var key when key == rightKey:
                     await gameActions.Rotate(Direction.Right, 1);
