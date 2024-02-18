@@ -30,17 +30,17 @@ public class GameActions
             (Direction.Right, false) => heading + 1,
             (Direction.Left, true) => heading - 10,
             (Direction.Left, false) => heading - 1,
-            (Direction.Invert, false) => heading - 180, // Turn the ship around
+            (Direction.Invert, true) => heading - 180, // Turn the ship around
             _ => 0,//turn north if someone calls this with a bogus Direction
         };
         heading = ClampRotation(heading);
         await apiService.QueueAction([new("changeHeading", heading.ToString())]);
     }
 
-    public async Task MoveForwardAsync(bool lightSpeed)
+    public async Task MoveForwardAsync(int distance)
     {
         heading = ClampRotation(heading);
-        var actions = Enumerable.Range(0, lightSpeed ? 10 : 1)
+        var actions = Enumerable.Range(0, distance)
                 .Select(n => new QueueActionRequest("move", heading.ToString()));
         await apiService.QueueAction(actions);
     }
