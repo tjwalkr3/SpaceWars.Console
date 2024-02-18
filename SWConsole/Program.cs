@@ -26,6 +26,7 @@ class Program
         const ConsoleKey infoKey = ConsoleKey.I;
         const ConsoleKey shopKey = ConsoleKey.F;
         const ConsoleKey repairKey = ConsoleKey.R;
+        const ConsoleKey repairFastKey = ConsoleKey.Tab;
         const ConsoleKey readAndEmptyMessagesKey = ConsoleKey.M;
 
         Uri baseAddress = getApiBaseAddress(args);
@@ -124,6 +125,13 @@ class Program
                     await gameActions.RepairShipAsync();
                     Console.WriteLine("Ship repair requested.");
                     break;
+                case var key when key == repairFastKey:
+                    for (int i = 0; i < 6; i++)
+                    {
+                        await gameActions.RepairShipAsync();
+                    }
+                    Console.WriteLine("6x Repair Requested");
+                    break;
                 case var key when key == infoKey:
                     foreach (var item in Shop)
                     {
@@ -197,7 +205,7 @@ class Program
             Console.Clear();
             Console.WriteLine($"Name: {username,-32} Token: {gameActions.Token}");
             Console.WriteLine($"Left: {leftKey,-12} Right: {rightKey,-12} Forward: {forwardKey,-12} Fire: {fireKey,-24} Clear Queue: {clearQueueKey,-6}");
-            Console.WriteLine($"Fast Left: {leftFastKey,-7} Fast Right: {rightFastKey,-7} Fast Forward: {forwardFastKey,-7} Rapid Fire: Shift+{fireKey,-12}");
+            Console.WriteLine($"Fast Left: {leftFastKey,-7} Fast Right: {rightFastKey,-7} Fast Forward: {forwardFastKey,-7} Rapid Fire: Shift+{fireKey,-12} Fast Repair: {repairFastKey,-6}");
             Console.WriteLine($"Info: {infoKey,-11}  Shop: {shopKey,-12}  Repair: {repairKey,-13} Read & Empty Messages: {readAndEmptyMessagesKey,-6}  Random Walk: {randomWalkKey,-6}");
 
             for (int i = 0; i < gameActions.Weapons.Count; i++)
