@@ -109,6 +109,7 @@ class Program
                     await gameActions.FireWeaponAsync();
                     if (shiftPressed)
                     {
+                        await gameActions.ClearQueueAsync();
                         for (int i = 0; i < 9; i++)
                         {
                             await gameActions.FireWeaponAsync();
