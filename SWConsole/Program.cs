@@ -165,7 +165,10 @@ class Program
                 //***  V    V    V    V                                            V    V    V    V    V
                 //**************************************************************************************
                 case var key when key == randomWalkKey:
-                    RandomWalk(gameActions, 20);
+                    if (shiftPressed)
+                        RandomWalk(gameActions, 40);
+                    else
+                        RandomWalk(gameActions, 20);
                     break;
             }
         }
@@ -192,9 +195,10 @@ class Program
         void printStatus()
         {
             Console.Clear();
-            Console.WriteLine($"Name: {username,-34} Token: {gameActions.Token}");
-            Console.WriteLine($"Left: {leftKey,-12} Right: {rightKey,-12} Forward: {forwardKey,-12} Fire: {fireKey,-12} Clear Queue: {clearQueueKey,-12}");
-            Console.WriteLine($"Info: {infoKey,-12}  Shop: {shopKey,-12}  Repair: {repairKey,-12} Read & Empty Messages: {readAndEmptyMessagesKey,-12}");
+            Console.WriteLine($"Name: {username,-32} Token: {gameActions.Token}");
+            Console.WriteLine($"Left: {leftKey,-12} Right: {rightKey,-12} Forward: {forwardKey,-12} Fire: {fireKey,-24} Clear Queue: {clearQueueKey,-6}");
+            Console.WriteLine($"Fast Left: {leftFastKey,-7} Fast Right: {rightFastKey,-7} Fast Forward: {forwardFastKey,-7} Rapid Fire: Shift+{fireKey,-12}");
+            Console.WriteLine($"Info: {infoKey,-11}  Shop: {shopKey,-12}  Repair: {repairKey,-13} Read & Empty Messages: {readAndEmptyMessagesKey,-6}  Random Walk: {randomWalkKey,-6}");
 
             for (int i = 0; i < gameActions.Weapons.Count; i++)
             {
