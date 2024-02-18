@@ -107,6 +107,13 @@ class Program
                     break;
                 case var key when key == fireKey:
                     await gameActions.FireWeaponAsync();
+                    if (shiftPressed)
+                    {
+                        for (int i = 0; i < 9; i++)
+                        {
+                            await gameActions.FireWeaponAsync();
+                        }
+                    }
                     break;
                 case var key when key == clearQueueKey:
                     await gameActions.ClearQueueAsync();
